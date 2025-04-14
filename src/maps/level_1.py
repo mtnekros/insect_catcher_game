@@ -16,14 +16,28 @@ class MapLevel1:
                 i * Block.width,
                 height - Block.height * 2,
             )
-            for i in range(6)
+            for i in range(1, 7)
         ]
-        for _ in range(3):
-            self.blocks.append(Block(
-                random.randint(0, width),  # noqa: S311
-                height - Block.height * 5
-            ))
+        self.blocks.extend(self.generate_random_blocks(
+            width=width,
+            height=height,
+            count=3,
+        ))
 
+
+    def generate_random_blocks(self, width: int, height: int, count: int) -> list[Block]:
+        """Generate random blocks."""
+        blocks = []
+        for _ in range(count):
+            while True:
+                new_block = Block(
+                    random.randint(0, width),  # noqa: S311
+                    height - Block.height * 5
+                )
+                if all(not new_block.get_rect().colliderect(block.get_rect()) for block in  blocks):
+                    blocks.append(new_block)
+                    break
+        return blocks
 
     def get_collition_resolution(self, rect: Rect) -> tuple[int, int]:
         """Return (dx, dy) to move given Rect out of the blocks."""

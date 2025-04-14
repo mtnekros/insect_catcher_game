@@ -5,4 +5,8 @@
 * [X] Prepare slides
 * [X] Draw player animation + motion with keyboard
 * [X] Draw block
-* [ ] Add interaction with blocks
+* [X] Add interaction with blocks
+* [X] Draw ground/map & add interaction with it
+* [ ] Add sound effects
+* [ ] Camera movement
+* [ ] Add enemies or 
