@@ -4,7 +4,7 @@ from pygame import Rect
 from src.butterfly import Butterfly
 from src.maps.level_1 import MapLevel1
 from src.player import Player
-from src.sounds import play_bg_music
+from src.sounds import pause_bg_music, play_bg_music, stop_bg_music
 from src.stats_overlay import StatsOverlay
 
 
@@ -95,6 +95,7 @@ class Game:
         play_bg_music()
         while self.is_running:
             if self.is_over():
+                pause_bg_music()
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         self.is_running = False
@@ -103,6 +104,7 @@ class Game:
             self.update(dt)
             self.draw()
             pygame.display.flip()
+        stop_bg_music()
         pygame.quit()
 
 
