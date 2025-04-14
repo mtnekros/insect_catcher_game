@@ -44,3 +44,4 @@ class Block:
     def draw(self, screen: Surface) -> None:
         """Draw the block."""
         screen.blit(self.sprite, self.rect.topleft)
+        pygame.draw.rect(screen, "Blue", self.get_rect(), 1)

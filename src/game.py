@@ -78,15 +78,15 @@ class Game:
         """Render the objects in the game."""
         self.screen.fill(Game.BACKGROUND)
         # self.road.draw(self.screen)
-        for walker in self.walkers:
-            walker.draw(self.screen)
         self.map.draw(self.screen)
         self.player.draw(self.screen)
+        for walker in self.walkers:
+            walker.draw(self.screen)
         self.stats_overlay.draw(self.screen)
 
     def is_over(self) -> bool:
         """Return true if game is over."""
-        return Game.RECT.bottom <= self.player.rect.bottom
+        return Game.RECT.bottom <= self.player.get_rect().bottom
 
     def run(self) -> None:
         """Run the game loop."""

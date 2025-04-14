@@ -26,6 +26,7 @@ class Player:
         "jumping_y_speed",
         "jump_count",
         "max_jump_count",
+        "inner_padding",
     )
 
     def __init__(self) -> None:
@@ -52,15 +53,16 @@ class Player:
         self.jumping_y_speed = -750
         self.jump_count = 0
         self.max_jump_count = 2
+        self.inner_padding = 5
 
-    @property
-    def rect(self) -> Rect:
+    def get_rect(self) -> Rect:
         """Return the bounding box of player."""
+        inner_padding = self.inner_padding
         return Rect(
-            int(self.x),
-            int(self.y),
-            self.width,
-            self.height
+            int(self.x) + inner_padding * 2.5,
+            int(self.y) + inner_padding,
+            self.width - inner_padding * 3.5,
+            self.height - inner_padding
         )
 
     @property
@@ -99,7 +101,7 @@ class Player:
         self.y_speed = self.y_speed+self.y_gravity
         self.y += self.y_speed * dt
 
-        col_dx, col_dy = map.get_collition_resolution(self.rect)
+        col_dx, col_dy = map.get_collition_resolution(self.get_rect())
         if col_dy < 0: # means the block is below & player needs to be moved up (player touches the ground)
             self.y_speed = 0
             self.jump_count = 0
@@ -112,4 +114,5 @@ class Player:
         frame = pygame.transform.scale(self.current_animation.get_frame(), (self.width, self.height))
         if self.direction == "left":
             frame = pygame.transform.flip(frame, True, False)
+        pygame.draw.rect(screen, "Red", self.get_rect(), 1)
         screen.blit(frame, (self.x, self.y))
