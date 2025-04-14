@@ -52,11 +52,13 @@ class Game:
 
         params dt(float): delta time passed since last time it was called.
         """
+        initial_key_presses: dict[int, bool] = {}
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.is_running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
+                    initial_key_presses[pygame.K_UP] = True
                     self.add_walkers(count=1)
                 elif event.key == pygame.K_SPACE:
                     self.add_walkers(count=10)
@@ -64,7 +66,7 @@ class Game:
                     self.remove_walkers(count=1)
                 elif event.key == pygame.K_DELETE:
                     self.remove_walkers(count=10)
-        self.player.update(pygame.key.get_pressed(), dt)
+        self.player.update(initial_key_presses, pygame.key.get_pressed(), self.block, dt)
         for walker in self.walkers:
             walker.update(dt, Game.RECT)
         self.stats_overlay.update(Game.FRAME_RATE, len(self.walkers))
