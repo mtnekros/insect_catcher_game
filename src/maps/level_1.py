@@ -1,3 +1,5 @@
+import random
+
 from pygame.rect import Rect
 from pygame.surface import Surface
 
@@ -14,8 +16,14 @@ class MapLevel1:
                 i * Block.width,
                 height - Block.height * 2,
             )
-            for i in range(20)
+            for i in range(6)
         ]
+        for _ in range(3):
+            self.blocks.append(Block(
+                random.randint(0, width),  # noqa: S311
+                height - Block.height * 5
+            ))
+
 
     def get_collition_resolution(self, rect: Rect) -> tuple[int, int]:
         """Return (dx, dy) to move given Rect out of the blocks."""
