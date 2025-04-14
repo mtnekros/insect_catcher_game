@@ -105,6 +105,8 @@ class Player:
         if col_dy < 0: # means the block is below & player needs to be moved up (player touches the ground)
             self.y_speed = 0
             self.jump_count = 0
+        elif col_dy > 0:
+            self.y_speed *= -1
         self.x += col_dx
         self.y += col_dy
         self.current_animation.update(dt)
