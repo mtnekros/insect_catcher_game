@@ -1,12 +1,11 @@
-import time
-
 import pygame
 from pygame import Rect
 
+from src.butterfly import Butterfly
 from src.maps.level_1 import MapLevel1
 from src.player import Player
+from src.sounds import play_bg_music
 from src.stats_overlay import StatsOverlay
-from src.walker import Walker
 
 
 class Game:
@@ -22,33 +21,34 @@ class Game:
     RECT = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
     INITIAL_WALKER_COUNT = 10
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    WAVE_TIME_PERIOD = 10_000 # 10 secs
 
     def __init__(self) -> None:
         """Initialize the game."""
         self.is_running = True
         # self.road = Road(width=350)
-        self.walkers = []
+        self.butterflies = []
+        self.next_wave_time = 0
         self.player = Player()
-        self.add_walkers(count=Game.INITIAL_WALKER_COUNT)
+        self.add_butterfly(count=Game.INITIAL_WALKER_COUNT)
         self.map = MapLevel1(Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT)
         self.clock = pygame.time.Clock()
         self.stats_overlay = StatsOverlay(5, 5)
 
-
-    def add_walkers(self, count: int=1) -> None:
-        """Add walkers into the game."""
+    def add_butterfly(self, count: int=1) -> None:
+        """Add butterfly into the game."""
         for _ in range(count):
-            self.walkers.append(
-                Walker(Game.SCREEN_WIDTH/2, Game.SCREEN_HEIGHT/2)
+            self.butterflies.append(
+                Butterfly(Game.SCREEN_WIDTH/2, Game.SCREEN_HEIGHT/2)
             )
 
     def remove_walkers(self, count: int=1) -> None:
         """Remove walkers from the game."""
         for _ in range(count):
-            if not self.walkers:
+            if not self.butterflies:
                 print("No walkers to remove")
                 return
-            self.walkers.pop()
+            self.butterflies.pop()
 
     def update(self, dt: float) -> None:
         """Update objects in the game.
@@ -62,17 +62,17 @@ class Game:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     initial_key_presses[pygame.K_UP] = True
-                    self.add_walkers(count=1)
                 elif event.key == pygame.K_SPACE:
-                    self.add_walkers(count=10)
-                elif event.key == pygame.K_DOWN:
-                    self.remove_walkers(count=1)
+                    self.add_butterfly(count=10)
                 elif event.key == pygame.K_DELETE:
                     self.remove_walkers(count=10)
+        self.next_wave_time += dt
+        if self.next_wave_time >= Game.WAVE_TIME_PERIOD:
+            self.add_butterfly(count=10)
         self.player.update(initial_key_presses, pygame.key.get_pressed(), self.map, dt)
-        for walker in self.walkers:
+        for walker in self.butterflies:
             walker.update(dt, Game.RECT)
-        self.stats_overlay.update(Game.FRAME_RATE, len(self.walkers))
+        self.stats_overlay.update(Game.FRAME_RATE, len(self.butterflies))
 
     def draw(self) -> None:
         """Render the objects in the game."""
@@ -80,7 +80,7 @@ class Game:
         # self.road.draw(self.screen)
         self.map.draw(self.screen)
         self.player.draw(self.screen)
-        for walker in self.walkers:
+        for walker in self.butterflies:
             walker.draw(self.screen)
         self.stats_overlay.draw(self.screen)
 
@@ -91,6 +91,8 @@ class Game:
     def run(self) -> None:
         """Run the game loop."""
         pygame.init()
+        # play music
+        play_bg_music()
         while self.is_running:
             if self.is_over():
                 for event in pygame.event.get():

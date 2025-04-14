@@ -7,6 +7,7 @@
 * [X] Draw block
 * [X] Add interaction with blocks
 * [X] Draw ground/map & add interaction with it
-* [ ] Add sound effects
+* [/] Add sound effects
+    * [ ] Background Music
 * [ ] Camera movement
 * [ ] Add enemies or 
