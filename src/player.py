@@ -31,10 +31,10 @@ class Player:
         self.y = 400
         self.width = 68
         self.height = 80
-        self.x_speed = 450
-        self.y_speed = 10
-        self.y_gravity = 60
-        self.jumping_y_speed = -950
+        self.x_speed = 200
+        self.y_speed = 0
+        self.y_gravity = 30
+        self.jumping_y_speed = -650
 
     @property
     def rect(self) -> Rect:
@@ -68,7 +68,6 @@ class Player:
             self.direction = "left"
             self.x -= self.x_speed * dt
         else:
-            # TODO: Some refactoring needed here.
             self.state = "resting"
 
         if initial_key_presses.get(pygame.K_UP):
