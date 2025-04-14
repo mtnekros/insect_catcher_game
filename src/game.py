@@ -86,7 +86,7 @@ class Game:
 
     def is_over(self) -> bool:
         """Return true if game is over."""
-        return Game.RECT.bottom <= self.player.rect.top
+        return Game.RECT.bottom <= self.player.rect.bottom
 
     def run(self) -> None:
         """Run the game loop."""
