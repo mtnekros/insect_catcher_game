@@ -1,7 +1,9 @@
-import pygame
-from pygame import Rect, Vector2
+import time
 
-from src.block import Block
+import pygame
+from pygame import Rect
+
+from src.maps.level_1 import MapLevel1
 from src.player import Player
 from src.stats_overlay import StatsOverlay
 from src.walker import Walker
@@ -16,7 +18,7 @@ class Game:
     CENTER_X = SCREEN_WIDTH // 2
     CENTER_Y = SCREEN_HEIGHT // 2
     GROUND_HEIGHT = 550
-    BACKGROUND = "black"
+    BACKGROUND = (50, 50, 50)
     RECT = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
     INITIAL_WALKER_COUNT = 10
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -28,9 +30,10 @@ class Game:
         self.walkers = []
         self.player = Player()
         self.add_walkers(count=Game.INITIAL_WALKER_COUNT)
-        self.block = Block(100, Game.GROUND_HEIGHT)
+        self.map = MapLevel1(Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT)
         self.clock = pygame.time.Clock()
         self.stats_overlay = StatsOverlay(5, 5)
+
 
     def add_walkers(self, count: int=1) -> None:
         """Add walkers into the game."""
@@ -66,7 +69,7 @@ class Game:
                     self.remove_walkers(count=1)
                 elif event.key == pygame.K_DELETE:
                     self.remove_walkers(count=10)
-        self.player.update(initial_key_presses, pygame.key.get_pressed(), self.block, dt)
+        self.player.update(initial_key_presses, pygame.key.get_pressed(), self.map, dt)
         for walker in self.walkers:
             walker.update(dt, Game.RECT)
         self.stats_overlay.update(Game.FRAME_RATE, len(self.walkers))
@@ -77,14 +80,23 @@ class Game:
         # self.road.draw(self.screen)
         for walker in self.walkers:
             walker.draw(self.screen)
-        self.block.draw(self.screen)
+        self.map.draw(self.screen)
         self.player.draw(self.screen)
         self.stats_overlay.draw(self.screen)
+
+    def is_over(self) -> bool:
+        """Return true if game is over."""
+        return Game.RECT.bottom <= self.player.rect.top
 
     def run(self) -> None:
         """Run the game loop."""
         pygame.init()
         while self.is_running:
+            if self.is_over():
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        self.is_running = False
+                continue
             dt = self.clock.tick(Game.FRAME_RATE) / 1000.0
             self.update(dt)
             self.draw()

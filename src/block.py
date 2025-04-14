@@ -11,13 +11,15 @@ class Block:
     the map.
     """
 
+    width = 80
+    height = 80
+
     def __init__(self, left: int, top: int) -> None:
         """Initialize the block."""
-        width = 80
-        height = 80
-        self.rect = Rect(left, top, width, height)
-        _sprite = pygame.image.load("./assets/grass_block.png").convert_alpha()
-        self.sprite = pygame.transform.scale(_sprite, (width, height))
+        self.rect = Rect(left, top, self.width, self.height)
+        if not hasattr(Block, "sprite"):
+            original_sprite = pygame.image.load("./assets/grass_block.png").convert_alpha()
+            Block.sprite = pygame.transform.scale(original_sprite, (Block.width, Block.height))
 
     def get_rect(self) -> Rect:
         """Return the bounding box of the block."""

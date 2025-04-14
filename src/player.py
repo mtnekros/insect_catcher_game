@@ -6,6 +6,7 @@ from pygame.rect import Rect
 
 from src.animation import Animation, get_frame
 from src.block import Block
+from src.maps.level_1 import MapLevel1
 
 Direction = Literal["right", "left"]
 AnimationType = Literal["resting", "running", "jumping", "shooting"]
@@ -54,7 +55,7 @@ class Player:
         self,
         initial_key_presses: dict[int, bool],
         key_presses: ScancodeWrapper,
-        block: Block,
+        map: MapLevel1,
         dt: float,
     ) -> None:
         """Update animation."""
@@ -79,12 +80,11 @@ class Player:
         self.y_speed = self.y_speed+self.y_gravity
         self.y += self.y_speed * dt
 
-        if self.rect.colliderect(block.get_rect()):
-            dx, dy = block.get_collition_resolution(self.rect)
-            if dy < 0: # means the block is below & player needs to be moved up
-                self.y_speed = 0
-            self.x += dx
-            self.y += dy
+        col_dx, col_dy = map.get_collition_resolution(self.rect)
+        if col_dy < 0: # means the block is below & player needs to be moved up
+            self.y_speed = 0
+        self.x += col_dx
+        self.y += col_dy
         self.current_animation.update(dt)
 
     def draw(self, screen: pygame.Surface) -> None:
