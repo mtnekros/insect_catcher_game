@@ -5,13 +5,28 @@ from pygame.key import ScancodeWrapper
 from pygame.rect import Rect
 
 from src.animation import Animation, get_frame
-from src.block import Block
 from src.maps.level_1 import MapLevel1
 
 Direction = Literal["right", "left"]
 AnimationType = Literal["resting", "running", "jumping", "shooting"]
 class Player:
     """Animation: handles player animation."""
+
+    __slots__ = (
+        "state",
+        "direction",
+        "animations",
+        "x",
+        "y",
+        "width",
+        "height",
+        "x_speed",
+        "y_speed",
+        "y_gravity",
+        "jumping_y_speed",
+        "jump_count",
+        "max_jump_count",
+    )
 
     def __init__(self) -> None:
         """Initialize animation."""
@@ -34,7 +49,9 @@ class Player:
         self.x_speed = 200
         self.y_speed = 0
         self.y_gravity = 30
-        self.jumping_y_speed = -650
+        self.jumping_y_speed = -750
+        self.jump_count = 0
+        self.max_jump_count = 2
 
     @property
     def rect(self) -> Rect:
@@ -70,18 +87,22 @@ class Player:
         else:
             self.state = "resting"
 
-        if initial_key_presses.get(pygame.K_UP):
-            self.i_frame = 0
+        if (
+            initial_key_presses.get(pygame.K_UP) and
+            self.jump_count < self.max_jump_count
+        ):
             self.state = "jumping"
             self.y_speed = self.jumping_y_speed
             self.animations["jumping"].reset()
+            self.jump_count += 1
 
         self.y_speed = self.y_speed+self.y_gravity
         self.y += self.y_speed * dt
 
         col_dx, col_dy = map.get_collition_resolution(self.rect)
-        if col_dy < 0: # means the block is below & player needs to be moved up
+        if col_dy < 0: # means the block is below & player needs to be moved up (player touches the ground)
             self.y_speed = 0
+            self.jump_count = 0
         self.x += col_dx
         self.y += col_dy
         self.current_animation.update(dt)
