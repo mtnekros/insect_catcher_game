@@ -46,7 +46,7 @@ class Player:
             "running": Animation(running_frames, 1)
         }
         self.x = 100
-        self.y = 400
+        self.y = 200
         self.width = 68
         self.height = 80
         self.x_speed = 200
