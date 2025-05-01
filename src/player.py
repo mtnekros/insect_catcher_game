@@ -74,6 +74,10 @@ class Player:
             self.height - inner_padding
         )
 
+    def is_touching(self, rect: Rect) -> bool:
+        """Return if the player is touching the given rectangle."""
+        return self.get_rect().colliderect(rect)
+
     @property
     def current_animation(self) -> Animation:
         """Return current animation based on state."""
@@ -128,3 +132,4 @@ class Player:
             frame = pygame.transform.flip(frame, True, False)
         # pygame.draw.rect(screen, "Red", self.get_rect(), 1)
         screen.blit(frame, (self.x + cam_pos.x, self.y + cam_pos.y))
+

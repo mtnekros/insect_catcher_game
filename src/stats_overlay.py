@@ -30,11 +30,12 @@ class StatsOverlay:
         memory_usage = memory_info.rss / (1024 * 1024) # Convert bytes to MB
         return f"{memory_usage:.2f} MB"
 
-    def update(self, frame_rate: int, walker_count: int) -> None:
+    def update(self, frame_rate: int, walker_count: int, score: int) -> None:
         """Update the stats."""
         self.stats = [
             f"Frame Rate: {frame_rate}",
-            f"Walker Count: {walker_count}",
+            f"Score: {score}",
+            f"Butterflies Count: {walker_count}",
             f"RAM Usage: {self.get_ram_usage()}",
         ]
 

@@ -23,7 +23,7 @@ class Butterfly:
     width = 40
     height = 40
 
-    __slots__ = ("pos", "velocity", "animation")
+    __slots__ = ("pos", "velocity", "animation", "is_dead")
 
     def __init__(self, x: float, y: float) -> None:
         """Create butterfly instance."""
@@ -32,9 +32,19 @@ class Butterfly:
         sprite_sheet = pygame.image.load("./assets/butterfly.png").convert_alpha()
         frame_width = 15.5
         frame_height = 14
+        self.is_dead = False
         self.animation = Animation(
-            frames = [
-                pygame.transform.scale(get_frame(sprite_sheet, frame_width, frame_height, i, 0), (Butterfly.width, Butterfly.height))
+            frames=[
+                pygame.transform.scale(
+                    get_frame(
+                        sprite_sheet,
+                        frame_width,
+                        frame_height,
+                        i,
+                        0
+                    ),
+                    (Butterfly.width, Butterfly.height)
+                )
                 for i in range(3)
             ],
             duration_secs=0.75,
@@ -73,6 +83,10 @@ class Butterfly:
             self.pos.y = bbox.top
         if rect.bottom > bbox.bottom:
             self.pos.y = bbox.bottom - self.height
+
+    def mark_as_dead(self) -> None:
+        """Mark the butterfly is dead."""
+        self.is_dead = True
 
     def draw(self, screen: Surface, cam_pos: Vector2) -> None:
         """Draw the walker."""

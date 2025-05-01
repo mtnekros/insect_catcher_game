@@ -26,7 +26,7 @@ class Game:
     MAP_WIDTH = SCREEN_WIDTH * 3
     MAP_HEIGHT = SCREEN_HEIGHT
     MAP_RECT = Rect(0, 0, MAP_WIDTH, MAP_HEIGHT)
-    WAVE_TIME_PERIOD = 10_000 # 10 secs
+    WAVE_TIME_PERIOD = 10 # 10 secs
 
     def __init__(self) -> None:
         """Initialize the game."""
@@ -35,11 +35,12 @@ class Game:
         # self.road = Road(width=350)
         self.butterflies: list[Butterfly] = []
         self.next_wave_time = 0
-        self.player = Player()
+        self.player: Player = Player()
         self.add_butterfly(count=Game.INITIAL_WALKER_COUNT)
-        self.map = RandomMap(Game.MAP_WIDTH, Game.MAP_HEIGHT, 25)
+        self.map: RandomMap = RandomMap(Game.MAP_WIDTH, Game.MAP_HEIGHT, 25)
         self.clock = pygame.time.Clock()
         self.stats_overlay = StatsOverlay(5, 5)
+        self.score = 0
 
     def add_butterfly(self, count: int=1) -> None:
         """Add butterfly into the game."""
@@ -51,7 +52,7 @@ class Game:
                 )
             )
 
-    def remove_walkers(self, count: int=1) -> None:
+    def remove_butterflies(self, count: int=1) -> None:
         """Remove walkers from the game."""
         for _ in range(count):
             if not self.butterflies:
@@ -74,15 +75,23 @@ class Game:
                 elif event.key == pygame.K_SPACE:
                     self.add_butterfly(count=10)
                 elif event.key == pygame.K_DELETE:
-                    self.remove_walkers(count=10)
+                    self.remove_butterflies(count=10)
         self.next_wave_time += dt
         if self.next_wave_time >= Game.WAVE_TIME_PERIOD:
             self.add_butterfly(count=10)
+            self.next_wave_time = 0
         self.player.update(initial_key_presses, pygame.key.get_pressed(), self.map, dt)
         self.cam_pos.x += self.player.displacement.x
-        for walker in self.butterflies:
-            walker.update(dt, Game.MAP_RECT)
-        self.stats_overlay.update(Game.FRAME_RATE, len(self.butterflies))
+        for butterfly in self.butterflies:
+            butterfly.update(dt, Game.MAP_RECT)
+            if self.player.is_touching(butterfly.get_rect()):
+                self.score += 1
+                butterfly.mark_as_dead()
+        self.stats_overlay.update(Game.FRAME_RATE, len(self.butterflies), self.score)
+
+    def cleanup_dead_butterflies(self) -> None:
+        """Remove dead butterflies from the list of butterflies."""
+        self.butterflies = [ b for b in self.butterflies if not b.is_dead ]
 
     def draw(self) -> None:
         """Render the objects in the game."""
@@ -90,8 +99,9 @@ class Game:
         # self.road.draw(self.screen)
         self.map.draw(self.screen, self.cam_pos)
         self.player.draw(self.screen, self.cam_pos)
-        for walker in self.butterflies:
-            walker.draw(self.screen, self.cam_pos)
+        for butterfly in self.butterflies:
+            butterfly.draw(self.screen, self.cam_pos)
+        self.cleanup_dead_butterflies()
         self.stats_overlay.draw(self.screen)
 
     def is_over(self) -> bool:
