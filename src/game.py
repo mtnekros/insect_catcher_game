@@ -26,7 +26,7 @@ class Game:
     MAP_WIDTH = SCREEN_WIDTH * 3
     MAP_HEIGHT = SCREEN_HEIGHT
     MAP_RECT = Rect(0, 0, MAP_WIDTH, MAP_HEIGHT)
-    WAVE_TIME_PERIOD = 10 # 10 secs
+    WAVE_TIME_PERIOD = 30 # 10 secs
 
     def __init__(self) -> None:
         """Initialize the game."""
@@ -45,12 +45,9 @@ class Game:
     def add_butterfly(self, count: int=1) -> None:
         """Add butterfly into the game."""
         for _ in range(count):
-            self.butterflies.append(
-                Butterfly(
-                    x=self.cam_pos.x + random.randint(0, int(Game.SCREEN_WIDTH/2)),  # noqa: S311
-                    y=self.cam_pos.y + random.randint(0, int(Game.SCREEN_HEIGHT/2)),  # noqa: S311
-                )
-            )
+            x= -self.cam_pos.x + random.randint(int(Game.SCREEN_WIDTH/2), Game.SCREEN_WIDTH)  # noqa: S311
+            y= -self.cam_pos.y + random.randint(0, int(Game.SCREEN_HEIGHT/2))  # noqa: S311
+            self.butterflies.append(Butterfly(x, y))
 
     def remove_butterflies(self, count: int=1) -> None:
         """Remove walkers from the game."""
