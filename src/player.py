@@ -2,6 +2,7 @@ from typing import Literal
 
 import pygame
 from pygame.key import ScancodeWrapper
+from pygame.math import Vector2
 from pygame.rect import Rect
 
 from src.animation import Animation, get_frame
@@ -27,6 +28,7 @@ class Player:
         "jump_count",
         "max_jump_count",
         "inner_padding",
+        "last_pos",
     )
 
     def __init__(self) -> None:
@@ -54,6 +56,13 @@ class Player:
         self.jump_count = 0
         self.max_jump_count = 2
         self.inner_padding = 5
+        self.last_pos = pygame.Vector2(self.x, self.y)
+
+    @property
+    def displacement(self) -> Vector2:
+        """Return the displacement of the player in the last frame."""
+        return self.last_pos - Vector2(self.x, self.y)
+
 
     def get_rect(self) -> Rect:
         """Return the bounding box of player."""
@@ -78,6 +87,7 @@ class Player:
         dt: float,
     ) -> None:
         """Update animation."""
+        self.last_pos = pygame.Vector2(self.x, self.y)
         if key_presses[pygame.K_RIGHT]:
             self.state = "running"
             self.direction = "right"
@@ -111,10 +121,10 @@ class Player:
         self.y += col_dy
         self.current_animation.update(dt)
 
-    def draw(self, screen: pygame.Surface) -> None:
+    def draw(self, screen: pygame.Surface, cam_pos: pygame.Vector2) -> None:
         """Draw the frame."""
         frame = pygame.transform.scale(self.current_animation.get_frame(), (self.width, self.height))
         if self.direction == "left":
             frame = pygame.transform.flip(frame, True, False)
-        pygame.draw.rect(screen, "Red", self.get_rect(), 1)
-        screen.blit(frame, (self.x, self.y))
+        # pygame.draw.rect(screen, "Red", self.get_rect(), 1)
+        screen.blit(frame, (self.x + cam_pos.x, self.y + cam_pos.y))

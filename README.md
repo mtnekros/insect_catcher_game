@@ -9,5 +9,13 @@
 * [X] Draw ground/map & add interaction with it
 * [/] Add sound effects
     * [ ] Background Music
-* [ ] Camera movement
-* [ ] Add enemies or 
+* [/] Camera movement
+    * [X] Move the player
+    * [X] Move the camera with the same speed that the camera moves.
+    * [ ] Move the camera only when the player reaches a certain point
+* [ ] Add enemies or butterflies to catch
+
+## How do i add camera movements to the scene?
+* Move the character that is already implemented.
+* Move the camera
+* Move the camera if 

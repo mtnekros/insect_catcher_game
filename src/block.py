@@ -1,5 +1,5 @@
 import pygame
-from pygame import Rect
+from pygame import Rect, Vector2
 from pygame.surface import Surface
 
 
@@ -41,7 +41,9 @@ class Block:
             return min_dx, 0
         return 0, min_dy
 
-    def draw(self, screen: Surface) -> None:
+    def draw(self, screen: Surface, offset: Vector2|None = None) -> None:
         """Draw the block."""
-        screen.blit(self.sprite, self.rect.topleft)
-        pygame.draw.rect(screen, "Blue", self.get_rect(), 1)
+        if offset is None:
+            offset = Vector2(0, 0)
+        screen.blit(self.sprite, self.rect.topleft + offset)
+        # pygame.draw.rect(screen, "Blue", self.get_rect(), 1)

@@ -1,5 +1,6 @@
 import random
 
+from pygame import Vector2
 from pygame.rect import Rect
 from pygame.surface import Surface
 
@@ -21,7 +22,7 @@ class MapLevel1:
         self.blocks.extend(self.generate_random_blocks(
             width=width,
             height=height,
-            count=3,
+            count=5,
         ))
 
 
@@ -47,8 +48,9 @@ class MapLevel1:
                 return dx, dy
         return 0, 0
 
-    def draw(self, screen: Surface) -> None:
+
+    def draw(self, screen: Surface, cam_pos: Vector2) -> None:
         """Draw the map."""
         for block in self.blocks:
-            block.draw(screen)
+            block.draw(screen, offset=cam_pos)
 

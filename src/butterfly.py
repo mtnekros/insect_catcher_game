@@ -30,7 +30,6 @@ class Butterfly:
         self.pos = Vector2(x, y)
         self.velocity = get_random_vec(40, 60)
         sprite_sheet = pygame.image.load("./assets/butterfly.png").convert_alpha()
-        print(sprite_sheet.get_size())
         frame_width = 15.5
         frame_height = 14
         self.animation = Animation(
@@ -75,11 +74,11 @@ class Butterfly:
         if rect.bottom > bbox.bottom:
             self.pos.y = bbox.bottom - self.height
 
-    def draw(self, screen: Surface) -> None:
+    def draw(self, screen: Surface, cam_pos: Vector2) -> None:
         """Draw the walker."""
         angle = self.velocity.angle_to(Vector2(0, -1))
         frame = self.animation.get_frame()
         frame = pygame.transform.rotate(frame, angle)
-        screen.blit(frame, (self.pos))
-        pygame.draw.rect(screen, "Red", self.get_rect(), width=1)
+        screen.blit(frame, (self.pos + cam_pos))
+        # pygame.draw.rect(screen, "Red", self.get_rect(), width=1)
 

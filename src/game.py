@@ -1,5 +1,5 @@
 import pygame
-from pygame import Rect
+from pygame import Rect, Vector2
 
 from src.butterfly import Butterfly
 from src.maps.level_1 import MapLevel1
@@ -25,9 +25,10 @@ class Game:
 
     def __init__(self) -> None:
         """Initialize the game."""
+        self.cam_pos = Vector2(100, 0)
         self.is_running = True
         # self.road = Road(width=350)
-        self.butterflies = []
+        self.butterflies: list[Butterfly] = []
         self.next_wave_time = 0
         self.player = Player()
         self.add_butterfly(count=Game.INITIAL_WALKER_COUNT)
@@ -70,6 +71,7 @@ class Game:
         if self.next_wave_time >= Game.WAVE_TIME_PERIOD:
             self.add_butterfly(count=10)
         self.player.update(initial_key_presses, pygame.key.get_pressed(), self.map, dt)
+        self.cam_pos.x += self.player.displacement.x
         for walker in self.butterflies:
             walker.update(dt, Game.RECT)
         self.stats_overlay.update(Game.FRAME_RATE, len(self.butterflies))
@@ -78,10 +80,10 @@ class Game:
         """Render the objects in the game."""
         self.screen.fill(Game.BACKGROUND)
         # self.road.draw(self.screen)
-        self.map.draw(self.screen)
-        self.player.draw(self.screen)
+        self.map.draw(self.screen, self.cam_pos)
+        self.player.draw(self.screen, self.cam_pos)
         for walker in self.butterflies:
-            walker.draw(self.screen)
+            walker.draw(self.screen, self.cam_pos)
         self.stats_overlay.draw(self.screen)
 
     def is_over(self) -> bool:
