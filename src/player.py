@@ -6,7 +6,7 @@ from pygame.math import Vector2
 from pygame.rect import Rect
 
 from src.animation import Animation, get_frame
-from src.maps.level_1 import MapLevel1
+from src.maps.random_map import RandomMap
 
 Direction = Literal["right", "left"]
 AnimationType = Literal["resting", "running", "jumping", "shooting"]
@@ -83,7 +83,7 @@ class Player:
         self,
         initial_key_presses: dict[int, bool],
         key_presses: ScancodeWrapper,
-        map: MapLevel1,
+        map: RandomMap,
         dt: float,
     ) -> None:
         """Update animation."""

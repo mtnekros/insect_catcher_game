@@ -1,8 +1,10 @@
+import random
+
 import pygame
 from pygame import Rect, Vector2
 
 from src.butterfly import Butterfly
-from src.maps.level_1 import MapLevel1
+from src.maps.random_map import RandomMap
 from src.player import Player
 from src.sounds import pause_bg_music, play_bg_music, stop_bg_music
 from src.stats_overlay import StatsOverlay
@@ -21,6 +23,9 @@ class Game:
     RECT = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
     INITIAL_WALKER_COUNT = 10
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    MAP_WIDTH = SCREEN_WIDTH * 3
+    MAP_HEIGHT = SCREEN_HEIGHT
+    MAP_RECT = Rect(0, 0, MAP_WIDTH, MAP_HEIGHT)
     WAVE_TIME_PERIOD = 10_000 # 10 secs
 
     def __init__(self) -> None:
@@ -32,7 +37,7 @@ class Game:
         self.next_wave_time = 0
         self.player = Player()
         self.add_butterfly(count=Game.INITIAL_WALKER_COUNT)
-        self.map = MapLevel1(Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT)
+        self.map = RandomMap(Game.MAP_WIDTH, Game.MAP_HEIGHT, 25)
         self.clock = pygame.time.Clock()
         self.stats_overlay = StatsOverlay(5, 5)
 
@@ -40,7 +45,10 @@ class Game:
         """Add butterfly into the game."""
         for _ in range(count):
             self.butterflies.append(
-                Butterfly(Game.SCREEN_WIDTH/2, Game.SCREEN_HEIGHT/2)
+                Butterfly(
+                    x=self.cam_pos.x + random.randint(0, int(Game.SCREEN_WIDTH/2)),  # noqa: S311
+                    y=self.cam_pos.y + random.randint(0, int(Game.SCREEN_HEIGHT/2)),  # noqa: S311
+                )
             )
 
     def remove_walkers(self, count: int=1) -> None:
@@ -73,7 +81,7 @@ class Game:
         self.player.update(initial_key_presses, pygame.key.get_pressed(), self.map, dt)
         self.cam_pos.x += self.player.displacement.x
         for walker in self.butterflies:
-            walker.update(dt, Game.RECT)
+            walker.update(dt, Game.MAP_RECT)
         self.stats_overlay.update(Game.FRAME_RATE, len(self.butterflies))
 
     def draw(self) -> None:

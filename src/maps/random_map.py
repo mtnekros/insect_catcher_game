@@ -7,10 +7,10 @@ from pygame.surface import Surface
 from src.block import Block
 
 
-class MapLevel1:
+class RandomMap:
     """Basic level 1 map."""
 
-    def __init__(self, width: int, height: int) -> None:
+    def __init__(self, width: int, height: int, extra_blocks: int) -> None:
         """Initialize map with blocks."""
         self.blocks = [
             Block(
@@ -22,18 +22,19 @@ class MapLevel1:
         self.blocks.extend(self.generate_random_blocks(
             width=width,
             height=height,
-            count=5,
+            count=extra_blocks,
+            offset=Vector2(5 * Block.width, 0),
         ))
 
 
-    def generate_random_blocks(self, width: int, height: int, count: int) -> list[Block]:
+    def generate_random_blocks(self, width: int, height: int, count: int, offset: Vector2) -> list[Block]:
         """Generate random blocks."""
         blocks = []
         for _ in range(count):
             while True:
                 new_block = Block(
-                    random.randint(0, width),  # noqa: S311
-                    height - Block.height * 5
+                    random.randint(int(offset.x), width),  # noqa: S311
+                    int(offset.y) + height - Block.height * 5
                 )
                 if all(not new_block.get_rect().colliderect(block.get_rect()) for block in  blocks):
                     blocks.append(new_block)
