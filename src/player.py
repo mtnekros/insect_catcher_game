@@ -3,10 +3,12 @@ from typing import Literal
 import pygame
 from pygame.key import ScancodeWrapper
 from pygame.math import Vector2
+from pygame.mixer import Sound, music
 from pygame.rect import Rect
 
 from src.animation import Animation, get_frame
 from src.maps.random_map import RandomMap
+from src.sounds import alter_pitch_rnd
 
 Direction = Literal["right", "left"]
 AnimationType = Literal["resting", "running", "jumping", "shooting"]
@@ -29,6 +31,7 @@ class Player:
         "max_jump_count",
         "inner_padding",
         "last_pos",
+        "sounds",
     )
 
     def __init__(self) -> None:
@@ -44,6 +47,9 @@ class Player:
             "resting": Animation(resting_frames, 1),
             "jumping": Animation(resting_frames, .7),
             "running": Animation(running_frames, 1)
+        }
+        self.sounds: dict[str, Sound] = {
+            "jumping": Sound("./assets/music/grunt.wav")
         }
         self.x = 100
         self.y = 200
@@ -110,6 +116,7 @@ class Player:
             self.state = "jumping"
             self.y_speed = self.jumping_y_speed
             self.animations["jumping"].reset()
+            alter_pitch_rnd(self.sounds["jumping"]).play()
             self.jump_count += 1
 
         self.y_speed = self.y_speed+self.y_gravity

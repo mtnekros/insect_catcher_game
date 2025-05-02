@@ -45,7 +45,7 @@ class Game:
     def add_butterfly(self, count: int=1) -> None:
         """Add butterfly into the game."""
         for _ in range(count):
-            x= -self.cam_pos.x + random.randint(int(Game.SCREEN_WIDTH/2), Game.SCREEN_WIDTH)  # noqa: S311
+            x= -self.cam_pos.x + random.randint(0, Game.SCREEN_WIDTH)  # noqa: S311
             y= -self.cam_pos.y + random.randint(0, int(Game.SCREEN_HEIGHT/2))  # noqa: S311
             self.butterflies.append(Butterfly(x, y))
 
